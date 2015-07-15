@@ -1,0 +1,34 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>打字效果</title>
+  <SCRIPT LANGUAGE="JavaScript">
+    var max=0;
+    var sd=100;  //这里是控制速度的
+    var txt,lentxt,go;
+    function textlist()
+    {
+      if (max>=lentxt){clearTimeout(go);}
+      document.getElementById('con').innerHTML+=txt.substr(max,1);
+      document.getElementById('con').innerHTML=document.getElementById('con').innerHTML.replace(/\%\$/ig,'<br>')
+      max++
+    }
+    function textticker()
+    {
+      txt=document.getElementById('con').innerHTML;
+      txt=txt.replace(/\<br\>/ig,'%$')
+      lentxt=txt.length;
+      document.getElementById('con').innerHTML='';
+      go = setInterval(textlist, sd);
+    }
+  </script>
+</head>
+<body bgcolor="#fef4d9" OnLoad="textticker()">
+<div id='content' style="z-index: 1000; position: absolute; left: 60px; top: 150px; height:200px; width:200px;">
+<div id="con" style="z-index: 1000;border:0;overflow: visible;
+    position: absolute; left:220px; top:220px; height: 200px; width:200px;">
+  fdsafdafdsafasf
+</div>
+  </div>
+</body>
+</html>

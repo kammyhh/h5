@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <script src="lib/createjs.min.js"></script>
+  <title>h5</title>
+  <style>
+    html, body {
+      width:  100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+  <script>
+    function init() {
+      var oriWidth = 320, radio = 1;
+      var canvas=document.getElementById("demo");
+
+      window.onresize=resizeCanvas;
+      function resizeCanvas(){
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        radio = canvas.width/oriWidth;
+      }
+      resizeCanvas();
+      var stage = new createjs.Stage("demo");
+
+
+      var circle = new createjs.Shape();
+      circle.graphics.beginFill("DeepSkyBlue").drawCircle(100, 0, 50);
+      circle.x = 100;
+      circle.y = 100;
+      stage.addChild(circle);
+
+      var text = new createjs.Text("Hello World", "20px Arial", "#ff7700");
+      text.x = 100;
+      text.textBaseline = "alphabetic";
+      stage.addChild(text);
+
+      createjs.Tween.get(circle, {loop: true})
+          .to({x: 300}, 200, createjs.Ease.getPowInOut(1))
+          .to({y: 300}, 500, createjs.Ease.getPowInOut(2))
+          .to({x: 100}, 1000, createjs.Ease.getPowInOut(3))
+          .to({y: 100}, 2000, createjs.Ease.getPowInOut(4));
+
+
+      createjs.Tween.get(text, {loop: true})
+          .to({x: 300}, 200, createjs.Ease.getPowInOut(1))
+          .to({y: 300}, 500, createjs.Ease.getPowInOut(2))
+          .to({x: 100}, 1000, createjs.Ease.getPowInOut(3))
+          .to({y: 100}, 2000, createjs.Ease.getPowInOut(4));
+
+      createjs.Ticker.setFPS(60);
+      createjs.Ticker.addEventListener("tick", stage);
+    }
+
+  </script>
+</head>
+<body onload="init();">
+  <canvas id="demo" height="100" width="100"></canvas>
+  <div id='d' style="background-color:#000000; width: 100px;height:100px"></div>
+</body>
+</html>

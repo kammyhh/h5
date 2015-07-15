@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1,IE=edge" />
+  <meta name="viewport" content="user-scalable=no, width=640" />
+  <script src="javascripts/createjs.min.js"></script>
+  <title>h5</title>
+  <style>
+    html, body {
+      width:  100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    canvas {
+      display: block;
+    }
+
+
+  </style>
+  <script>
+    function init() {
+      var oriWidth = 640, radio = window.innerWidth/oriWidth;
+      var canvas = document.getElementById("demo");
+      window.onresize = resizeCanvas;
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        radio = canvas.width / oriWidth;
+      }
+      resizeCanvas();
+      var stage = new createjs.Stage("demo");
+      var bg = new createjs.Bitmap("pics/bg@2x.jpg");
+      bg.x = 0;
+      bg.y = 0;
+      bg.scaleX = radio;
+      bg.scaleY = radio;
+      stage.addChild(bg);
+      stage.update();
+
+
+      var loading_time = 5000,
+          loading_fade_time = 500,
+          loading_interval = loading_time / 4,
+          loading_endpoint = loading_time + loading_fade_time;
+      loading();
+
+      var text_lines_wait_time = 1000,
+          text_fade_time = 250,
+          text_line_height = 80,
+          n = 5,
+          subtitle_endpoint = loading_endpoint + text_lines_wait_time
+              + text_fade_time * ( 7 * n + 8);
+      subtitle();
+
+      var rotate_time = 1000,
+          move_time = 1000;
+      animation();
+
+
+
+      createjs.Ticker.setFPS(60);
+      createjs.Ticker.addEventListener("tick", stage);
+
+      function loading() {
+        var circle1 = new createjs.Bitmap("pics/circle1@2x.png");
+        circle1.scaleX = radio;
+        circle1.scaleY = radio;
+        //  image width/2: 468/2 = 234
+        circle1.regX = 234;
+        circle1.regY = 234;
+        circle1.x = window.innerWidth/2;
+        circle1.y = window.innerHeight * 0.382;
+        stage.addChild(circle1);
+
+        createjs.Tween.get(circle1)
+            .to({rotation: -360}, loading_time)
+            .to({alpha: 0}, loading_fade_time);
+
+        var circle2 = new createjs.Bitmap("pics/circle2@2x.png");
+        circle2.scaleX = radio;
+        circle2.scaleY = radio;
+        circle2.regX = 234;
+        circle2.regY = 234;
+        circle2.x = window.innerWidth/2;
+        circle2.y = window.innerHeight * 0.382;
+        stage.addChild(circle2);
+
+        createjs.Tween.get(circle2)
+            .to({rotation: 360}, loading_time)
+            .to({alpha: 0}, loading_fade_time);
+
+        var txt_loading = new createjs.Text("加载中...", "40px Arial", "#FFFFFF");
+        txt_loading.scaleX = radio;
+        txt_loading.scaleY = radio;
+        txt_loading.regX = 80;
+        txt_loading.regY = -10;
+        txt_loading.x = window.innerWidth/2;
+        txt_loading.y = window.innerHeight * 0.382;
+        txt_loading.textBaseline = "alphabetic";
+        stage.addChild(txt_loading);
+
+        createjs.Tween.get(txt_loading)
+            .to({alpha: 0}, loading_interval)
+            .to({alpha: 1}, loading_interval)
+            .to({alpha: 0}, loading_interval)
+            .to({alpha: 1}, loading_interval)
+            .to({alpha: 0}, loading_fade_time);
+      }
+
+      function subtitle() {
+
+        var txt_line1 = new createjs.Text("人们之间的联系千丝万缕，", "30px Arial", "#FFFFFF");
+        txt_line1.scaleX = radio;
+        txt_line1.scaleY = radio;
+        txt_line1.alpha = 0;
+        txt_line1.regX = 170;
+        txt_line1.regY = -10;
+        txt_line1.x = window.innerWidth/2;
+        txt_line1.y = window.innerHeight * 0.382;
+        txt_line1.textBaseline = "alphabetic";
+        stage.addChild(txt_line1);
+
+        createjs.Tween.get(txt_line1)
+            .wait(loading_endpoint + text_lines_wait_time)
+            .to({alpha: 1}, text_fade_time)
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height, alpha: 1}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height * 2, alpha: 0.75}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height * 3, alpha: 0.5}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height * 4, alpha: 0}, text_fade_time);
+
+        var txt_line2 = new createjs.Text("并且不受时间空间的限制，", "30px Arial", "#FFFFFF");
+        txt_line2.scaleX = radio;
+        txt_line2.scaleY = radio;
+        txt_line2.alpha = 0;
+        txt_line2.regX = 170;
+        txt_line2.regY = -10;
+        txt_line2.x = window.innerWidth/2;
+        txt_line2.y = window.innerHeight * 0.382;
+        txt_line2.textBaseline = "alphabetic";
+        stage.addChild(txt_line2);
+
+        createjs.Tween.get(txt_line2)
+            .to({y: txt_line1.y + text_line_height}, 0)
+            .wait(loading_endpoint + text_lines_wait_time + text_fade_time * (n + 1))
+            .to({y: txt_line1.y, alpha: 1}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height, alpha: 1}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height * 2, alpha: 0.75}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height * 3, alpha: 0.5}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height * 4, alpha: 0}, text_fade_time );
+
+        var txt_line3 = new createjs.Text("尽管我们创造了所有的通讯技术，", "30px Arial", "#FFFFFF");
+        txt_line3.scaleX = radio;
+        txt_line3.scaleY = radio;
+        txt_line3.alpha = 0;
+        txt_line3.regX = 210;
+        txt_line3.regY = -10;
+        txt_line3.x = window.innerWidth/2;
+        txt_line3.y = window.innerHeight * 0.382;
+        txt_line3.textBaseline = "alphabetic";
+        stage.addChild(txt_line3);
+
+        createjs.Tween.get(txt_line3)
+            .to({y: txt_line1.y + text_line_height}, 0)
+            .wait(loading_endpoint + text_lines_wait_time + text_fade_time * (n + 1) * 2)
+            .to({y: txt_line1.y, alpha: 1}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height, alpha: 1}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height * 2, alpha: 0.75}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height * 3, alpha: 0.5}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height * 4, alpha: 0}, text_fade_time );
+
+        var txt_line4 = new createjs.Text("但是没有比人类的心灵感知更厉害的发明！", "30px Arial", "#FFFFFF");
+        txt_line4.scaleX = radio;
+        txt_line4.scaleY = radio;
+        txt_line4.alpha = 0;
+        txt_line4.regX = 270;
+        txt_line4.regY = -10;
+        txt_line4.x = window.innerWidth/2;
+        txt_line4.y = window.innerHeight * 0.382;
+        txt_line4.textBaseline = "alphabetic";
+        stage.addChild(txt_line4);
+
+        createjs.Tween.get(txt_line4)
+            .to({y: txt_line1.y + text_line_height}, 0)
+            .wait(loading_endpoint + text_lines_wait_time + text_fade_time * (n + 1) * 3)
+            .to({y: txt_line1.y, alpha: 1}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height, alpha: 1}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height * 2, alpha: 0.75}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height * 3, alpha: 0.5}, text_fade_time )
+            .wait(text_fade_time * n)
+            .to({y: txt_line1.y - text_line_height * 4, alpha: 0}, text_fade_time );
+      }
+
+      function animation() {
+
+        var txt_6du_down = new createjs.Text("世界这么大，你与任何一个人中间究竟隔几层", "30px Arial", "#FFFFFF");
+        txt_6du_down.scaleX = radio;
+        txt_6du_down.scaleY = radio;
+        txt_6du_down.alpha = 0;
+        txt_6du_down.regX = 300;
+        txt_6du_down.regY = -10;
+        txt_6du_down.x = window.innerWidth/2;
+        txt_6du_down.y = window.innerHeight * 0.9;
+        txt_6du_down.textBaseline = "alphabetic";
+        stage.addChild(txt_6du_down);
+
+        createjs.Tween.get(txt_6du_down)
+            .wait(subtitle_endpoint)
+            .to({alpha: 1}, 1000)
+            .wait(8000)
+            .to({alpha: 0}, 1000);
+
+        var circle_6du_1_1 = new createjs.Bitmap("pics/circle1@2x.png");
+        circle_6du_1_1.scaleX = radio * 5;
+        circle_6du_1_1.scaleY = radio * 5;
+        circle_6du_1_1.alpha = 0;
+        circle_6du_1_1.regX = 234;
+        circle_6du_1_1.regY = 234;
+        circle_6du_1_1.x = window.innerWidth * 0.2;
+        circle_6du_1_1.y = window.innerHeight * 0.2;
+        stage.addChild(circle_6du_1_1);
+
+        createjs.Tween.get(circle_6du_1_1)
+            .wait(0)
+            .wait(500)
+            .to({alpha: 1}, 0)
+            .to({scaleX: radio * 0.6, scaleY: radio * 0.6}, 200 )
+            .wait(800)
+            .to({rotation: 90}, 200)
+            .wait(7900)
+            .to({alpha: 0}, 200);
+
+        var circle_6du_1_2 = new createjs.Bitmap("pics/circle2@2x.png");
+        circle_6du_1_2.scaleX = radio * 5;
+        circle_6du_1_2.scaleY = radio * 5;
+        circle_6du_1_2.alpha = 0;
+        circle_6du_1_2.regX = 234;
+        circle_6du_1_2.regY = 234;
+        circle_6du_1_2.x = window.innerWidth * 0.2;
+        circle_6du_1_2.y = window.innerHeight * 0.2;
+        stage.addChild(circle_6du_1_2);
+
+        createjs.Tween.get(circle_6du_1_2)
+            .wait(0)
+            .wait(600)
+            .to({alpha: 1}, 0)
+            .to({scaleX: radio * 0.6, scaleY: radio * 0.6}, 200)
+            .wait(800)
+            .to({rotation: -90}, 200)
+            .wait(7800)
+            .to({alpha: 0}, 200);
+
+        var circle_6du_2_1 = new createjs.Bitmap("pics/circle1@2x.png");
+        circle_6du_2_1.scaleX = radio * 5;
+        circle_6du_2_1.scaleY = radio * 5;
+        circle_6du_2_1.alpha = 0;
+        circle_6du_2_1.regX = 234;
+        circle_6du_2_1.regY = 234;
+        circle_6du_2_1.x = window.innerWidth * 0.2;
+        circle_6du_2_1.y = window.innerHeight * 0.8;
+        stage.addChild(circle_6du_2_1);
+
+        createjs.Tween.get(circle_6du_2_1)
+            .wait(0)
+            .wait(500)
+            .to({alpha: 1}, 0)
+            .to({scaleX: radio * 0.6, scaleY: radio * 0.6}, 200 )
+            .wait(800)
+            .to({rotation: 90}, 200)
+            .wait(7900)
+            .to({alpha: 0}, 200);
+
+        var circle_6du_2_2 = new createjs.Bitmap("pics/circle2@2x.png");
+        circle_6du_2_2.scaleX = radio * 5;
+        circle_6du_2_2.scaleY = radio * 5;
+        circle_6du_2_2.alpha = 0;
+        circle_6du_2_2.regX = 234;
+        circle_6du_2_2.regY = 234;
+        circle_6du_2_2.x = window.innerWidth * 0.2;
+        circle_6du_2_2.y = window.innerHeight * 0.8;
+        stage.addChild(circle_6du_2_2);
+
+        createjs.Tween.get(circle_6du_2_2)
+            .wait(0)
+            .wait(600)
+            .to({alpha: 1}, 0)
+            .to({scaleX: radio * 0.6, scaleY: radio * 0.6}, 200)
+            .wait(800)
+            .to({rotation: -90}, 200)
+            .wait(7800)
+            .to({alpha: 0}, 200);
+
+
+      }
+    }
+
+
+  </script>
+</head>
+<body onload="init()">
+<canvas id="demo" height="100" width="100"></canvas>
+<div id='dd' style="z-index:100;background-color:#FFFFFF; position: absolute ;width: 2px; height: 2000px; left: 320px; top:0"></div>
+
+</body>
+</html>
