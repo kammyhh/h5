@@ -13,6 +13,7 @@
   <script src="javascripts/hammer.fakemultitouch.js"></script>
   <script src="javascripts/drum.js"></script>
   <link rel="stylesheet" href="javascripts/drum.css"></link>
+  <link rel="stylesheet" href="stylesheets/style.css"></link>
   <audio id="bgm" src="/audios/BGM.mp3" preload="auto" loop="loop"></audio>
 
 
@@ -25,86 +26,50 @@
       margin: 0;
       padding: 0;
     }
-    canvas {
-      display: block;
-    }
-    #input {
-      display: none;
-      position: absolute;
-      top: 83%;
-      left: 25%;
-      width: 50%;
-      height: 10%;
-      padding: 0;
-      border: 0;
-      z-index:1000;
-      overflow: auto;
-    }
-    #send {
-      display: none;
-      position: absolute;
-      top: 83%;
-      left: 25%;
-      width: 50%;
-      height: 10%;
-      padding: 0px;
-      border: 0px;
-      z-index:1000;
-      overflow: auto;
-    }
-    #download {
-      display: none;
-      position: absolute;
-      top: 83%;
-      left: 25%;
-      width: 50%;
-      height: 10%;
-      padding: 0px;
-      border: 0px;
-      z-index:1000;
-      overflow: auto;
-    }
-    div.drum-wrapper {
-      float: left;
-    }
-    div.drum {
-      transition-duration: 0.2s;
-      -webkit-transition-duration: 0.2s;
-    }
-    div.drum figure {
-      margin-left: 40px;
-      text-align: left;
-    }
-    #drum_fullYear {
-      margin-left: 10px;
-      width: 200px;
-    }
-    #drum_month {
-      margin-left: 10px;
-      width: 160px;
-    }
-    #drum_date {
-      width: 100px;
-    }
-    div.date-wrapper {
-      width: 600px;
-    }
-    div.date-wrapper form {
-      position: relative;
-    }
-    #wrapper {
-      position:relative;
-      z-index:1;
-      height:200px;
-      overflow:hidden;
-    }
-    #ta_content {
-      width: 400px;
-      height: 800px;
-    }
-
   </style>
   <script>
+
+    function LoadingBar(id)
+    {
+      this.loadbar = $("#" + id);
+      this.percentEle = $(".percent", this.loadbar);
+      this.percentNumEle = $(".percentNum", this.loadbar);
+      this.max = 100;
+      this.currentProgress = 0;
+    }
+    LoadingBar.prototype = {
+      constructor: LoadingBar,
+      setMax: function (maxVal)
+      {
+        this.max = maxVal;
+      },
+      setProgress: function (val)
+      {
+        if (val >= this.max)
+        {
+          val = this.max;
+        }
+        this.currentProgress = parseInt((val / this.max) * 100) + "%";
+        this.percentEle.width(this.currentProgress);
+        this.percentNumEle.text(this.currentProgress);
+      }
+    };
+
+    $(function ()
+    {
+      var loadbar = new LoadingBar("loadBar01");
+      var max = 100;
+      loadbar.setMax(max);
+      var time = setInterval(function ()
+      {
+        loadbar.setProgress(load_progress);
+        if (load_progress == max)
+        {
+          clearInterval(time);
+          return;
+        }
+      }, 10);
+    });
 
 //    pre-preload
     img1 = new Image();
@@ -113,8 +78,10 @@
     img2.src = "pics/circle2.png";
 
 //    preload
+
     var queue = new createjs.LoadQueue();
     queue.on("complete", handleComplete, this);
+    queue.on("progress", handleProgress, this);
     queue.loadManifest([
       {id: "circle1", src:"pics/circle1.png"},
       {id: "circle2", src:"pics/circle2.png"},
@@ -159,52 +126,12 @@
       {id: "TXL_4", src:"pics/TXL_4.png"}
     ]);
     function handleComplete() {
-      setTimeout("play()", 1000);
+      setTimeout("document.getElementById('loadBar01').style.display = 'none';play()", 500);
+    }
+    function handleProgress() {
+      load_progress = queue.progress * 100;
     }
 
-    function loading() {
-
-      var circle1 = new createjs.Bitmap(img1);
-      circle1.scaleX = ratio;
-      circle1.scaleY = ratio;
-      //  image width/2: 468/2 = 234
-      circle1.regX = 234;
-      circle1.regY = 234;
-      circle1.x = window.innerWidth/2;
-      circle1.y = window.innerHeight * 0.382;
-      stage.addChild(circle1);
-      createjs.Tween.get(circle1, {loop:true})
-          .to({rotation: -360}, loading_time);
-
-      var circle2 = new createjs.Bitmap(img2);
-      circle2.scaleX = ratio;
-      circle2.scaleY = ratio;
-      circle2.regX = 234;
-      circle2.regY = 234;
-      circle2.x = window.innerWidth/2;
-      circle2.y = window.innerHeight * 0.382;
-      stage.addChild(circle2);
-      createjs.Tween.get(circle2, {loop:true})
-          .to({rotation: 360}, loading_time);
-
-      var txt_loading = new createjs.Text("加载中...", "40px Arial", "#FFFFFF");
-      txt_loading.scaleX = ratio;
-      txt_loading.scaleY = ratio;
-      txt_loading.regX = 80;
-      txt_loading.regY = -10;
-      txt_loading.x = window.innerWidth/2;
-      txt_loading.y = window.innerHeight * 0.382;
-      txt_loading.textBaseline = "alphabetic";
-      stage.addChild(txt_loading);
-      txt_loading.addEventListener("click",function(){
-        skip();
-      });
-
-      createjs.Tween.get(txt_loading, {loop:true})
-          .to({alpha: 0}, loading_interval)
-          .to({alpha: 1}, loading_interval);
-
-    }
 //    init
     var oriWidth = 640, oriHeight = 1136;
     var ratio1, ratio2, ratio;
@@ -320,6 +247,50 @@
       s = setTimeout('subtitle()', 0);
       r = setTimeout('relation()', subtitle_duration + 1000);
       a = setTimeout('animation()', subtitle_duration + relation_duration + 1000);
+
+    }
+
+    function loading() {
+
+      var circle1 = new createjs.Bitmap(img1);
+      circle1.scaleX = ratio;
+      circle1.scaleY = ratio;
+      //  image width/2: 468/2 = 234
+      circle1.regX = 234;
+      circle1.regY = 234;
+      circle1.x = window.innerWidth/2;
+      circle1.y = window.innerHeight * 0.382;
+      stage.addChild(circle1);
+      createjs.Tween.get(circle1, {loop:true})
+          .to({rotation: -360}, loading_time);
+
+      var circle2 = new createjs.Bitmap(img2);
+      circle2.scaleX = ratio;
+      circle2.scaleY = ratio;
+      circle2.regX = 234;
+      circle2.regY = 234;
+      circle2.x = window.innerWidth/2;
+      circle2.y = window.innerHeight * 0.382;
+      stage.addChild(circle2);
+      createjs.Tween.get(circle2, {loop:true})
+          .to({rotation: 360}, loading_time);
+
+      var txt_loading = new createjs.Text("加载中...", "40px Arial", "#FFFFFF");
+      txt_loading.scaleX = ratio;
+      txt_loading.scaleY = ratio;
+      txt_loading.regX = 80;
+      txt_loading.regY = -10;
+      txt_loading.x = window.innerWidth/2;
+      txt_loading.y = window.innerHeight * 0.382;
+      txt_loading.textBaseline = "alphabetic";
+      stage.addChild(txt_loading);
+      txt_loading.addEventListener("click",function(){
+        skip();
+      });
+
+      createjs.Tween.get(txt_loading, {loop:true})
+          .to({alpha: 0}, loading_interval)
+          .to({alpha: 1}, loading_interval);
 
     }
 
@@ -2981,6 +2952,15 @@
 </head>
 
 <body onload="init()">
+
+<div id="loadBar01" class="loadBar">
+  <div>
+    <span class="percent">
+       <i></i>
+    </span>
+  </div>
+  <span class="percentNum">0%</span>
+</div>
 
 <div id="input" onclick="input()"></div>
 

@@ -282,7 +282,7 @@
 			settings.touch.on("drag", function (e) {
 				var evt = ["up", "down"];
 				if (evt.indexOf(e.gesture.direction)>=0) {
-					settings.rotation += Math.round(e.gesture.deltaY - settings.distance) * -1;
+					settings.rotation += Math.round(e.gesture.deltaY - settings.distance) * - 0.2;
 					transform();
 					settings.distance = e.gesture.deltaY;
 				}
